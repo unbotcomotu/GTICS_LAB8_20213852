@@ -54,33 +54,36 @@ public class KiwiController {
         }
         if(nombreUsuario==null||nombreUsuario.isEmpty()){
             response.put("status","error");
-            errors.put("nombreUsuario","Ingrese el nombreDeUsuario");
+            errors.put("nombreUsuario","Ingrese el nombre del usuario");
             validacion=false;
         }
         Movie movie= movieDao.buscarPorTitulo(titulo,api_key);
         User user=userRepository.findByNombre(nombreUsuario);
-        if(movie==null){
-            response.put("status","error");
-            errors.put("titulo","El título ingresado no existe o no se relaciona a algún resultado");
-            validacion=false;
-        }
-        if(user==null){
-            response.put("status","error");
-            errors.put("nombreUsuario","El nombre de usuario ingresado no se relaciona a alguno que se encuentre registrado");
-            validacion=false;
-        }
-        if(validacion){
-            movie.setUser(user);
-            movieRepository.save(movie);
-            response.put("status","success");
-            response.put("content", movie);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        if (validacion) {
+            if(movie==null){
+                response.put("status","error");
+                errors.put("titulo","El título ingresado no existe o no se relaciona a algún resultado");
+                validacion=false;
+            }
+            if(user==null){
+                response.put("status","error");
+                errors.put("nombreUsuario","El nombre de usuario ingresado no se relaciona a alguno que se encuentre registrado");
+                validacion=false;
+            }
+            if(validacion){
+                movie.setUser(user);
+                movieRepository.save(movie);
+                response.put("status","success");
+                response.put("content", movie);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            }else {
+                response.put("errors",errors);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
         }else {
             response.put("errors",errors);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-
-
     }
 
 }
