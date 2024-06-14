@@ -10,33 +10,30 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+@Configuration
 public class KiwiSecurityConfiguration {
-    @Configuration
-    public class KiwiConfig {
+    private final UserDetailsService userDetailsService;
 
-        private final UserDetailsService userDetailsService;
+    public KiwiSecurityConfiguration(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
-        public KiwiConfig(UserDetailsService userDetailsService) {
-            this.userDetailsService = userDetailsService;
-        }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-            return new BCryptPasswordEncoder();
-        }
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
+        httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        httpSecurity.csrf().disable();
+        httpSecurity.httpBasic();
 
-        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-        }
-        @Bean
-        public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
-            httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-            httpSecurity.csrf().disable();
-            httpSecurity.httpBasic();
+        httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
 
-            httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
-
-            return httpSecurity.build();
-        }
+        return httpSecurity.build();
     }
 }
