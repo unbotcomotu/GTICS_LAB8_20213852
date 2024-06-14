@@ -33,7 +33,7 @@ public class KiwiController {
     }
 
     @GetMapping("nowPlaying")
-    public ResponseEntity<HashMap<String, Object>> listarLugaresEncuentroPokemon2() {
+    public ResponseEntity<HashMap<String, Object>> nowPlaying() {
         HashMap<String, Object> response = new HashMap<>();
         List<String> listaPeliculas= movieDao.nowPlaying(api_key);
         response.put("status","success");
@@ -42,7 +42,7 @@ public class KiwiController {
     }
 
     @PostMapping("guardarFavorito")
-    public ResponseEntity<HashMap<String, Object>> listarLugaresEncuentroPokemon2(@RequestParam(value = "titulo",required = false)String titulo,
+    public ResponseEntity<HashMap<String, Object>> guardarFavorito(@RequestParam(value = "titulo",required = false)String titulo,
                                                                                   @RequestParam(value = "nombreUsuario",required = false)String nombreUsuario) {
         HashMap<String, Object> response = new HashMap<>();
         HashMap<String, Object> errors = new HashMap<>();
