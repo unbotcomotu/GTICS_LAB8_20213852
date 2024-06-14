@@ -22,6 +22,7 @@ public class KiwiController {
     final private MovieDao movieDao;
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
+    private final String api_key="f2b24e2cd1e7c4a9db0e1cff9d9f2560";
 
     public KiwiController(MovieDao movieDao,
                           UserRepository userRepository,
@@ -34,7 +35,7 @@ public class KiwiController {
     @GetMapping("nowPlaying")
     public ResponseEntity<HashMap<String, Object>> listarLugaresEncuentroPokemon2() {
         HashMap<String, Object> response = new HashMap<>();
-        List<String> listaPeliculas= movieDao.nowPlaying();
+        List<String> listaPeliculas= movieDao.nowPlaying(api_key);
         response.put("status","success");
         response.put("content", listaPeliculas);
         return ResponseEntity.ok(response);
@@ -56,7 +57,7 @@ public class KiwiController {
             errors.put("nombreUsuario","Ingrese el nombreDeUsuario");
             validacion=false;
         }
-        Movie movie= movieDao.buscarPorTitulo(titulo);
+        Movie movie= movieDao.buscarPorTitulo(titulo,api_key);
         User user=userRepository.findByNombre(nombreUsuario);
         if(movie==null){
             response.put("status","error");
